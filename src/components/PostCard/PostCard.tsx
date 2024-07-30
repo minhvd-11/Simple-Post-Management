@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Card, Space, Typography } from "antd";
+import { Card, Typography } from "antd";
 import { Post } from "../../types/post";
 
 interface PostCardProps {
