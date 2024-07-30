@@ -1,11 +1,17 @@
-
 import "./App.css";
-import PostCard from "./components/PostCard"
+import PostCardList from "./components/PostCardList";
+import AddButton from "./components/AddButton";
+import Title from "./components/Title";
 
 function App() {
-
   return (
-    <PostCard id={1} title={"Post number 1"} description={"Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sunt voluptatum eos tempora iste laborum modi laboriosam. Natus assumenda nemo veniam, harum dolorem itaque rerum laudantium. Aperiam commodi et eaque similique?"} />
+    <>
+      <Title title={"Post Management"}></Title>
+      <AddButton />
+      <>
+        <PostCardList />
+      </>
+    </>
   );
 }
 
