@@ -1,6 +1,11 @@
-import axios from "axios";
+import axios from "./customize-axios";
 
-export const getPost = async () => {
-    const response = await axios.get ('https://training-program.dev.tekoapis.net/api/v1/posts')
-    return response.data;
-}
+export const getPost = async (options = {}) => {
+  const response = await axios.get(`api/v1/posts?`, {
+    params: {
+        "page" : options,
+        "pageSize" : 12,
+    },
+  });
+  return response.data;
+};
