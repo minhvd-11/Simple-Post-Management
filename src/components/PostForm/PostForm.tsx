@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
+
 
 const { TextArea } = Input;
 
@@ -16,7 +17,10 @@ const PostForm: React.FC = () => {
         name="description"
         rules={[{ required: true }]}
       >
-        <TextArea placeholder="Enter description" rows={4} />
+        <TextArea
+          placeholder="Enter description"
+          autoSize={{ minRows: 4 }}
+        />
       </Form.Item>
       <Form.Item>
         <Button type="primary">Submit</Button>
