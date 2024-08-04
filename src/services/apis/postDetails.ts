@@ -8,6 +8,5 @@ export const getPostDetail = async (id = {}) => {
 export const putPostDetail = async (id = {}, postData = {}) => {
     const response = await axios.put(`api/v1/posts/${id}`, postData
     );
-    console.log(`got PostData`, postData);
     return response.data;
   }

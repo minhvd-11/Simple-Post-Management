@@ -1,22 +1,36 @@
 import React, { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
-import { Popconfirm } from "antd";
+import { Popconfirm, notification } from "antd";
+import { usePostDelete } from "../../hooks/postDelete";
+type NotificationType = 'success'
 
-const DeleteButton: React.FC = () => {
-    const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+interface DeleteButtonProps {
+  postId: number;
+}
+
+const DeleteButton: React.FC<DeleteButtonProps> = (props) => {
+  const id = props.postId;
+  const { isLoading, handleDeletePost } = usePostDelete(id);
+  const [open, setOpen] = useState(false);
+
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = (type: NotificationType) => {
+    api[type]({
+      message: 'Success',
+      description:
+      'Delete post successfully!',
+    });
+  };
 
   const showPopconfirm = () => {
     setOpen(true);
   };
 
-  const handleOk = () => {
-    setConfirmLoading(true);
-
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+  const handleOk = async () => {
+    await handleDeletePost();
+    setOpen(false);
+    openNotification('success');
   };
 
   const handleCancel = () => {
@@ -28,13 +42,14 @@ const DeleteButton: React.FC = () => {
     <Popconfirm
       title="Delete Post"
       description="Are you sure to delete this post?"
+      okText="Confirm"
       open={open}
       onConfirm={handleOk}
-      okButtonProps={{ loading: confirmLoading }}
+      okButtonProps={{ loading: isLoading }}
       onCancel={handleCancel}
     >
-      <DeleteOutlined type="primary" onClick={showPopconfirm}>
-      </DeleteOutlined>
+      {contextHolder}
+      <DeleteOutlined type="primary" onClick={showPopconfirm} />
     </Popconfirm>
   );
 }

@@ -15,3 +15,8 @@ export const postPost = async (postData: unknown) => {
   return response.data;
 }
 
+export const deletePost = async (id: number) => {
+  const response = await axios.delete(`api/v1/posts/${id}`);
+  console.log(`deleted data in post number:`, id )
+  return response.data;
+}

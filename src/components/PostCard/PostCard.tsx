@@ -21,7 +21,7 @@ const PostCard: React.FC<PostCardProps> = (props) => {
       title={`[${post.id}] ${postTitle}`}
       actions={[
         <EditButton key="edit" postId={post.id} />,
-        <DeleteButton key="delete" />,
+        <DeleteButton key="delete" postId={post.id}/>,
       ]}
     >
       <Typography.Paragraph
