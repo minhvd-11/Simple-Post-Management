@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input, Spin, message } from "antd";
+import { Button, Form, Input, Spin, notification } from "antd";
 import { usePostDetails } from "../../hooks/postDetail";
-import usePostFormSubmit from "../../hooks/postFormSubmit";
+import { usePostFormSubmit } from "../../hooks/postFormSubmit";
+type NotificationType = 'success'
 
 const { TextArea } = Input;
+
 
 interface PostFormProps {
   id?: number;
@@ -17,8 +19,16 @@ const PostForm: React.FC<PostFormProps> = (props) => {
   const { postTitle, postDescription } = usePostDetails(id);
   const { handleSubmit, submitting } = usePostFormSubmit();
 
-  const showMessage = () => {
-      message.success('Operation successful!', 5);}
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = (type: NotificationType) => {
+    api[type]({
+      message: 'Success',
+      description:
+      'Update post successfully!',
+    });
+  };
+
 
   useEffect(() => {
     if (mode === "edit") {
@@ -31,7 +41,7 @@ const PostForm: React.FC<PostFormProps> = (props) => {
       layout="vertical"
       form={form}
       onFinish={(values) => {
-        handleSubmit(values, mode, id).finally(() => onSubmit());
+        handleSubmit(values, mode, id).finally(() => {onSubmit(); openNotification('success');});
       }}
     >
       <Form.Item label="Title" name="title" rules={[{ required: true }]}>
@@ -44,12 +54,12 @@ const PostForm: React.FC<PostFormProps> = (props) => {
       >
         <TextArea placeholder="Enter description" autoSize={{ minRows: 4 }} />
       </Form.Item>
+      {contextHolder}
       <Form.Item>
         <Button
           type="primary"
           htmlType="submit"
           loading={submitting}
-          onClick={showMessage}
         >
           Submit
         </Button>

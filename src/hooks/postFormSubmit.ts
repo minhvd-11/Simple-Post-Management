@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 import { postPost } from "../services/apis/post";
 import { putPostDetail } from "../services/apis/postDetails";
 
-const usePostFormSubmit = () => {
+export const usePostFormSubmit = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = useCallback(
@@ -29,5 +29,3 @@ const usePostFormSubmit = () => {
 
   return { handleSubmit, submitting };
 };
-
-export default usePostFormSubmit;

@@ -26,15 +26,14 @@ const DeleteButton: React.FC = () => {
 
   return (
     <Popconfirm
-      title="Title"
-      description="Open Popconfirm with async logic"
+      title="Delete Post"
+      description="Are you sure to delete this post?"
       open={open}
       onConfirm={handleOk}
       okButtonProps={{ loading: confirmLoading }}
       onCancel={handleCancel}
     >
       <DeleteOutlined type="primary" onClick={showPopconfirm}>
-        Open Popconfirm with async logic
       </DeleteOutlined>
     </Popconfirm>
   );
