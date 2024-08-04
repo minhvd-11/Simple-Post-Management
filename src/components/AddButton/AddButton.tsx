@@ -37,7 +37,9 @@ const AddButton: React.FC = () => {
         footer
         width={800}
       >
-        <PostForm mode="create"/>
+        <PostForm mode="create" onSubmit={function (): void {
+          throw new Error("Function not implemented.");
+        } }/>
       </Modal>
     </>
   );

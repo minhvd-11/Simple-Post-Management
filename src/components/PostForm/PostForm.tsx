@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input, Spin } from "antd";
+import { Button, Form, Input, Spin, message } from "antd";
 import { usePostDetails } from "../../hooks/postDetail";
 import usePostFormSubmit from "../../hooks/postFormSubmit";
 
@@ -16,6 +16,9 @@ const PostForm: React.FC<PostFormProps> = (props) => {
   const { mode, id, onSubmit } = props;
   const { postTitle, postDescription } = usePostDetails(id);
   const { handleSubmit, submitting } = usePostFormSubmit();
+
+  const showMessage = () => {
+      message.success('Operation successful!', 5);}
 
   useEffect(() => {
     if (mode === "edit") {
@@ -46,6 +49,7 @@ const PostForm: React.FC<PostFormProps> = (props) => {
           type="primary"
           htmlType="submit"
           loading={submitting}
+          onClick={showMessage}
         >
           Submit
         </Button>

@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from "react";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Card, Typography, Modal } from "antd";
-import PostForm from "../PostForm";
+import React, { useState } from "react";
+import { Card, Typography } from "antd";
 import { Post } from "../../types/post";
+import DeleteButton from "../DeleteButton";
+import EditButton from "../EditButton";
 
 interface PostCardProps {
   post: Post;
@@ -13,26 +13,11 @@ const PostCard: React.FC<PostCardProps> = (props) => {
   const [rows] = useState(5);
   const [expanded, setExpanded] = useState(false);
 
-  const [open, setOpen] = useState(false);
-
-  const showModal = () => {
-    setOpen(true);
-  };
-
-  const handleOk = () => {
-    setOpen(false);
-  };
-
-  const handleCancel = () => {
-    console.log("Clicked cancel button");
-    setOpen(false);
-  };
-
   return (
     <Card
       className="card"
       title={`[${post.id}] ${post.title}`}
-      actions={[<EditOutlined key="edit" onClick={showModal}/>, <DeleteOutlined key="delete" />]}
+      actions={[<EditButton key="edit" postId={post.id}/>, <DeleteButton key="delete" />]}
     >
       <Typography.Paragraph
         className="post-description"
@@ -41,21 +26,11 @@ const PostCard: React.FC<PostCardProps> = (props) => {
           expandable: "collapsible",
           expanded,
           onExpand: (_, info) => setExpanded(info.expanded),
-          symbol: "Show more",
+          symbol: expanded ?  'Show less' :'Show more',
         }}
       >
         {post.description}
       </Typography.Paragraph>
-      <Modal
-        title="Add New Post"
-        open={open}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer
-        width={800}
-      >
-        <PostForm id = {post.id} mode="edit" onSubmit={handleCancel}/>
-      </Modal>
     </Card>
   );
 };
