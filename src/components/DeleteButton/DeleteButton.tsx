@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Popconfirm, notification } from "antd";
 import { usePostDelete } from "../../hooks/postDelete";
+import { PostContext } from "../Context/MyContext";
 type NotificationType = 'success'
 
-interface DeleteButtonProps {
-  postId: number;
-}
-
-const DeleteButton: React.FC<DeleteButtonProps> = (props) => {
-  const id = props.postId;
+const DeleteButton: React.FC = () => {
+  const { id, onUpdate } = useContext(PostContext);
   const { isLoading, handleDeletePost } = usePostDelete(id);
   const [open, setOpen] = useState(false);
 
@@ -30,6 +27,7 @@ const DeleteButton: React.FC<DeleteButtonProps> = (props) => {
   const handleOk = async () => {
     await handleDeletePost();
     setOpen(false);
+    onUpdate();
     openNotification('success');
   };
 

@@ -1,14 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { EditOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import PostForm from "../PostForm";
+import { PostContext } from "../Context/MyContext";
 
-interface EditButtonProps {
-  postId: number;
-}
-
-const EditButton: React.FC<EditButtonProps> = (props) => {
-  const id = props.postId;
+const EditButton: React.FC = () => {
+  const { id, onUpdate } = useContext(PostContext);
   const [open, setOpen] = useState(false);
 
   const showModal = () => {
@@ -17,6 +14,7 @@ const EditButton: React.FC<EditButtonProps> = (props) => {
 
   const handleOk = () => {
     setOpen(false);
+    onUpdate();
   };
 
   const handleCancel = () => {
@@ -35,7 +33,7 @@ const EditButton: React.FC<EditButtonProps> = (props) => {
         footer
         width={800}
       >
-        <PostForm id={id} mode="edit" onSubmit={handleCancel} />
+        <PostForm id={id} mode="edit" onSubmit={handleOk} />
       </Modal>
     </>
   );

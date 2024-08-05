@@ -5,7 +5,16 @@ import { usePosts } from "../../hooks/post";
 
 const PostCardList: React.FC = () => {
   const [page, setPage] = useState(1);
-  const { posts, totalPosts, isLoading } = usePosts(page);
+  const [update, setUpdate] = useState(false);
+  const { posts, totalPosts, isLoading, isUpdated } = usePosts(page, update);
+
+  const handlePostUpdate = () => {
+    // This function will be called when a post is updated
+    // You can update the state here, or call another function to handle the update
+    console.log("Post updated!", update);
+    // For example, you can update the page state to trigger a re-render
+    setUpdate(!isUpdated);
+  };
 
 return (
   <List
@@ -26,6 +35,7 @@ return (
       <List.Item>
         <PostCard
           post = {post}
+          onUpdate={handlePostUpdate}
         />
       </List.Item>
     )}

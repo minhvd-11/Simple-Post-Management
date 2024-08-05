@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { getPostDetail } from "../services/apis/postDetails";
 
 export const usePostDetails = (id = {}) => {
-    const [postTitle, setPostTitle] = useState();
-    const [postDescription, setPostDescription] = useState();
+    const [postTitle, setPostTitle] = useState('');
+    const [postDescription, setPostDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Modal } from "antd";
 import PostForm from "../PostForm";
+import { PostContext } from "../Context/MyContext";
 
 const AddButton: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const { onUpdate } = useContext(PostContext);
 
   const showModal = () => {
     setOpen(true);
@@ -12,6 +14,7 @@ const AddButton: React.FC = () => {
 
   const handleOk = () => {
     setOpen(false);
+    onUpdate();
   };
 
   const handleCancel = () => {
@@ -34,7 +37,7 @@ const AddButton: React.FC = () => {
         open={open}
         onOk={handleOk}
         onCancel={handleCancel}
-        footer
+        footer={null}
         width={800}
       >
         <PostForm mode="create" onSubmit={handleOk}/>
