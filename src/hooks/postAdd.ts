@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { postPost } from "../services/apis/post";
+import { postPost } from "../services/apis/posts";
 
 export const usePostAdd = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -9,6 +9,7 @@ export const usePostAdd = () => {
       setSubmitting(true);
       try {
           const response = await postPost(values);
+          console.log(response);
           return response.data;
       } catch (error) {
         console.error(error);

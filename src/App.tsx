@@ -1,18 +1,16 @@
+import { Typography } from "antd";
 import "./App.css";
-import PostCardList from "./components/PostCardList";
-import AddButton from "./components/AddButton";
-import Title from "./components/Title";
+import PostList from "./components/PostList";
 
-function App() {
+const { Title } = Typography;
+
+const App = () => {
   return (
     <>
-      <Title title={"Post Management"}></Title>
-      <AddButton />
-      <>
-        <PostCardList />
-      </>
+      <Title>Post Management</Title>
+      <PostList />
     </>
   );
-}
+};
 
 export default App;
