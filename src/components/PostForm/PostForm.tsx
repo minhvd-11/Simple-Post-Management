@@ -1,15 +1,20 @@
 import { Button, Form, FormProps, Input } from "antd";
 import { Post, PostFieldType } from "../../types/post";
 import { useEffect } from "react";
+import { usePostAdd, usePostUpdate } from "../../hooks/post";
 
 interface PostFormProps {
-  handleAfterSuccess: () => void;
+  currentPage: number;
+  handleAfterSuccess: (page: number) => void;
   postToEditData?: Post;
 }
 
 const PostForm: React.FC<PostFormProps> = (props) => {
   const [form] = Form.useForm();
-  const { postToEditData, handleAfterSuccess } = props;
+  const { currentPage, postToEditData, handleAfterSuccess } = props;
+
+  const { handleSubmit, uploading } = usePostAdd();
+  const { handleUpdate, updating } = usePostUpdate();
 
   useEffect(() => {
     if (postToEditData) {
@@ -25,12 +30,14 @@ const PostForm: React.FC<PostFormProps> = (props) => {
     values
   ) => {
     if (postToEditData) {
+      await handleUpdate(postToEditData.id, values);
       console.log("Update post with values:", values);
     } else {
+      await handleSubmit(values);
       console.log("Create a new post with values:", values);
     }
 
-    handleAfterSuccess();
+    handleAfterSuccess(postToEditData ? currentPage : 1);
   };
 
   return (

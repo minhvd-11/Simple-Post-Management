@@ -8,8 +8,7 @@ import { notification } from "antd";
 import { Post } from "../../types/post";
 
 const PostList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const { posts, loadingPosts, totalPosts } = usePosts(page);
+  const { handleGetPosts, posts, loadingPosts, page, totalPosts } = usePosts();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [postToEditData, setPostToEditData] = useState<Post>();
 
@@ -21,7 +20,8 @@ const PostList: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleAfterSuccess = (isDeleted?: boolean) => {
+  const handleAfterSuccess = async (page: number, isDeleted?: boolean) => {
+    await handleGetPosts(page);
     if (!isDeleted) closeModal();
     notification.success({
       message: "Success",
@@ -32,7 +32,6 @@ const PostList: React.FC = () => {
         : "Update post successfully!",
     });
   };
-
 
   const handleEditPost = (post: Post) => {
     setPostToEditData(post);
@@ -58,20 +57,18 @@ const PostList: React.FC = () => {
         width={800}
       >
         <PostForm
+          currentPage={page}
           postToEditData={postToEditData}
           handleAfterSuccess={handleAfterSuccess}
         />
       </Modal>
       <List
         pagination={{
-          onChange: (page) => {
-            setPage(page);
-            console.log('page number: ',page);
-          },
+          onChange: (page) => handleGetPosts(page),
           current: page,
           align: "center",
           pageSize: 12,
-          total : totalPosts,
+          total: totalPosts,
         }}
         grid={{
           gutter: 16,
@@ -87,6 +84,7 @@ const PostList: React.FC = () => {
         renderItem={(post) => (
           <List.Item>
             <PostCard
+              currentPage={page}
               handleAfterSuccess={handleAfterSuccess}
               handleEditPost={handleEditPost}
               post={post}

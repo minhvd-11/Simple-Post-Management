@@ -8,30 +8,33 @@ import {
   putPostDetail,
 } from "../services/apis/posts";
 
-export const usePosts = (page: number) => {
+export const usePosts = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [page, setPage] = useState(1);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [totalPosts, setTotalPosts] = useState(0);
 
-  useEffect(() => {
-    const handleGetPosts = async () => {
-      try {
-        setLoadingPosts(true);
-        const data = await getPosts(page);
-        setPosts(data.posts);
-        setTotalPosts(data.total);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoadingPosts(false);
-      }
-    };
+  const handleGetPosts = async (page: number) => {
+    try {
+      setLoadingPosts(true);
+      const data = await getPosts(page);
+      setPage(page);
+      setPosts(data.posts);
+      setTotalPosts(data.total);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoadingPosts(false);
+    }
+  };
 
-    handleGetPosts();
+  useEffect(() => {
+    handleGetPosts(page);
   }, [page]);
 
   return {
     posts,
+    handleGetPosts,
     loadingPosts,
     page,
     totalPosts,
@@ -57,30 +60,23 @@ export const usePostAdd = () => {
   return { handleSubmit, uploading };
 };
 
-export const usePostDetails = (id: number) => {
-  const [postTitle, setPostTitle] = useState("");
-  const [postDescription, setPostDescription] = useState("");
+export const usePostDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-    const handleGetPostDetails = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getPostDetail(id);
-        console.log("get Post detail: ", data);
-        setPostTitle(data.title);
-        setPostDescription(data.description);
-      } catch (err) {
-        console.log(err, "getPostDetail error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    handleGetPostDetails();
+  const handleGetPostDetail = async (id: number) => {
+    try {
+      setIsLoading(true);
+      const data = await getPostDetail(id);
+      console.log("get Post detail: ", data);
+    } catch (err) {
+      console.log(err, "getPostDetail error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
-    postTitle,
-    postDescription,
-    id,
+    handleGetPostDetail,
     isLoading,
   };
 };
@@ -107,11 +103,11 @@ export const usePostUpdate = () => {
   return { handleUpdate, updating };
 };
 
-export const usePostDelete = (id: number) => {
+export const usePostDelete = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
 
-  const handleDeletePost = async () => {
+  const handleDeletePost = async (id: number) => {
     try {
       setIsLoading(true);
       await deletePost(id);

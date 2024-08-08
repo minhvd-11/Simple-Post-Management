@@ -3,40 +3,35 @@ import { Card, Popconfirm, Typography } from "antd";
 import { Post } from "../../types/post";
 import "./PostCard.css";
 import { useState } from "react";
-import { deletePost } from "../../services/apis/posts";
+import { usePostDelete, usePostDetail } from "../../hooks/post";
 
 
 interface PostCardProps {
   post: Post;
+  currentPage: number;
   handleEditPost: (post: Post) => void;
-  handleAfterSuccess: (isDeleted?: boolean) => void;
+  handleAfterSuccess: (page: number, isDeleted?: boolean) => void;
 }
 
 const { Paragraph } = Typography;
 
 const PostCard: React.FC<PostCardProps> = (props) => {
-  const { post, handleEditPost, handleAfterSuccess } = props;
+  const { post, currentPage, handleEditPost, handleAfterSuccess } = props;
   const [expanded, setExpanded] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
+  const { isLoading, isDeleted , handleDeletePost } = usePostDelete();
 
-  const handleDeletePost = async (id: number) => {
-    try {
-      setIsLoading(true);
-      await deletePost(id);
-      setIsDeleted(true);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { handleGetPostDetail } = usePostDetail();
 
-  const handleConfirmDelete = () => {
-    setIsLoading(true);
-    handleDeletePost(post.id);
-    handleAfterSuccess(isDeleted);
+  const handleEditPostDetail = async () => {
+    await handleGetPostDetail(post.id);
+    console.log(post);
+    handleEditPost(post);
+  }
+
+  const handleConfirmDelete = async () => {
+    await handleDeletePost(post.id);
+    handleAfterSuccess(currentPage, isDeleted);
   };
 
   return (
@@ -44,7 +39,7 @@ const PostCard: React.FC<PostCardProps> = (props) => {
       className="post-card"
       title={`[${post.id}] ${post.title}`}
       actions={[
-        <EditOutlined key="edit" onClick={() => handleEditPost(post)} />,
+        <EditOutlined key="edit" onClick={handleEditPostDetail} />,
         <Popconfirm
           key="delete"
           title="Delete Post"
