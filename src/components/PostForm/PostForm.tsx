@@ -1,4 +1,4 @@
-import { Button, Form, FormProps, Input } from "antd";
+import { Button, Form, FormProps, Input, Spin } from "antd";
 import { Post, PostFieldType } from "../../types/post";
 import { useEffect } from "react";
 import { usePostAdd, usePostUpdate } from "../../hooks/post";
@@ -15,6 +15,7 @@ const PostForm: React.FC<PostFormProps> = (props) => {
 
   const { handleSubmit, uploading } = usePostAdd();
   const { handleUpdate, updating } = usePostUpdate();
+  //TODO:Spinner
 
   useEffect(() => {
     if (postToEditData) {
@@ -41,6 +42,7 @@ const PostForm: React.FC<PostFormProps> = (props) => {
   };
 
   return (
+    <Spin spinning={postToEditData? updating : uploading}>
     <Form
       form={form}
       name="post-form"
@@ -91,6 +93,7 @@ const PostForm: React.FC<PostFormProps> = (props) => {
         </Button>
       </Form.Item>
     </Form>
+    </Spin>
   );
 };
 

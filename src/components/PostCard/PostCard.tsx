@@ -3,7 +3,7 @@ import { Card, Popconfirm, Typography } from "antd";
 import { Post } from "../../types/post";
 import "./PostCard.css";
 import { useState } from "react";
-import { usePostDelete, usePostDetail } from "../../hooks/post";
+import { usePostDelete } from "../../hooks/post";
 
 
 interface PostCardProps {
@@ -19,15 +19,7 @@ const PostCard: React.FC<PostCardProps> = (props) => {
   const { post, currentPage, handleEditPost, handleAfterSuccess } = props;
   const [expanded, setExpanded] = useState(false);
 
-  const { isLoading, isDeleted , handleDeletePost } = usePostDelete();
-
-  const { handleGetPostDetail } = usePostDetail();
-
-  const handleEditPostDetail = async () => {
-    await handleGetPostDetail(post.id);
-    console.log(post);
-    handleEditPost(post);
-  }
+  const { isLoading: isDeleting, isDeleted , handleDeletePost } = usePostDelete();
 
   const handleConfirmDelete = async () => {
     await handleDeletePost(post.id);
@@ -39,13 +31,13 @@ const PostCard: React.FC<PostCardProps> = (props) => {
       className="post-card"
       title={`[${post.id}] ${post.title}`}
       actions={[
-        <EditOutlined key="edit" onClick={handleEditPostDetail} />,
+        <EditOutlined key="edit" onClick={() => handleEditPost(post)} />,
         <Popconfirm
           key="delete"
           title="Delete Post"
           description="Are you sure to delete this post?"
           onConfirm={handleConfirmDelete}
-          okButtonProps={{ loading: isLoading }}
+          okButtonProps={{ loading: isDeleting }}
           okText="Confirm"
           cancelText="Cancel"
         >
