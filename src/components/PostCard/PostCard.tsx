@@ -1,43 +1,48 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Card, Popconfirm, Typography } from "antd";
+import { Card, Popconfirm, PopconfirmProps, Typography } from "antd";
 import { Post } from "../../types/post";
 import "./PostCard.css";
 import { useState } from "react";
-import { usePostDelete } from "../../hooks/post";
-
+import { deletePost } from "../../services/apis/posts";
 
 interface PostCardProps {
   post: Post;
-  currentPage: number;
-  handleEditPost: (post: Post) => void;
-  handleAfterSuccess: (page: number, isDeleted?: boolean) => void;
+  handleEditPost: (id: number) => void;
+  handleAfterSuccess: (isDeleted?: boolean) => void;
 }
 
 const { Paragraph } = Typography;
 
 const PostCard: React.FC<PostCardProps> = (props) => {
-  const { post, currentPage, handleEditPost, handleAfterSuccess } = props;
+  const { post, handleEditPost, handleAfterSuccess } = props;
+  const [loadingDeletePost, setLoadingDeletePost] = useState<boolean>(false);
   const [expanded, setExpanded] = useState(false);
 
-  const { isLoading: isDeleting, isDeleted , handleDeletePost } = usePostDelete();
+  const handleConfirmDelete: PopconfirmProps["onConfirm"] = async () => {
+    try {
+      setLoadingDeletePost(true);
+      await deletePost(post.id);
+    } finally {
+      setLoadingDeletePost(false);
+    }
 
-  const handleConfirmDelete = async () => {
-    await handleDeletePost(post.id);
-    handleAfterSuccess(currentPage, isDeleted);
+    handleAfterSuccess(true);
   };
+
 
   return (
     <Card
+      data-testid="card-post"
       className="post-card"
       title={`[${post.id}] ${post.title}`}
       actions={[
-        <EditOutlined key="edit" onClick={() => handleEditPost(post)} />,
+        <EditOutlined key="edit" onClick={() => handleEditPost(post.id)} />,
         <Popconfirm
           key="delete"
           title="Delete Post"
           description="Are you sure to delete this post?"
           onConfirm={handleConfirmDelete}
-          okButtonProps={{ loading: isDeleting }}
+          okButtonProps={{ loading: loadingDeletePost }}
           okText="Confirm"
           cancelText="Cancel"
         >

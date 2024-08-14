@@ -1,98 +1,94 @@
 import { Button, Form, FormProps, Input, Spin } from "antd";
-import { Post, PostFieldType } from "../../types/post";
+import { PostFieldType } from "../../types/post";
 import { useEffect } from "react";
-import { usePostAdd, usePostUpdate } from "../../hooks/post";
+import { usePostDetail, useUpsertPost } from "../../hooks/post";
 
 interface PostFormProps {
-  currentPage: number;
-  handleAfterSuccess: (page: number) => void;
-  postToEditData?: Post;
+  handleAfterSuccess: () => void;
+  postToEditId?: number;
 }
 
 const PostForm: React.FC<PostFormProps> = (props) => {
   const [form] = Form.useForm();
-  const { currentPage, postToEditData, handleAfterSuccess } = props;
-
-  const { handleSubmit, uploading } = usePostAdd();
-  const { handleUpdate, updating } = usePostUpdate();
-  //TODO:Spinner
+  const { postToEditId, handleAfterSuccess } = props;
+  const { postDetail, loadingPostDetail } = usePostDetail(postToEditId);
+  const { loadingUpsertPost, handleCreatePost, handleUpdatePost } =
+    useUpsertPost();
 
   useEffect(() => {
-    if (postToEditData) {
+    if (postDetail) {
       const formInitialValues = {
-        title: postToEditData.title,
-        description: postToEditData.description,
+        title: postDetail.title,
+        description: postDetail.description,
       };
       form.setFieldsValue(formInitialValues);
     }
-  }, [form, postToEditData]);
+  }, [form, postDetail]);
 
   const handleConfirmUpsert: FormProps<PostFieldType>["onFinish"] = async (
     values
   ) => {
-    if (postToEditData) {
-      await handleUpdate(postToEditData.id, values);
-      console.log("Update post with values:", values);
+    if (postToEditId) {
+      await handleUpdatePost(postToEditId, values);
     } else {
-      await handleSubmit(values);
-      console.log("Create a new post with values:", values);
+      await handleCreatePost(values);
     }
 
-    handleAfterSuccess(postToEditData ? currentPage : 1);
+    handleAfterSuccess();
   };
 
   return (
-    <Spin spinning={postToEditData? updating : uploading}>
-    <Form
-      form={form}
-      name="post-form"
-      layout="vertical"
-      onFinish={handleConfirmUpsert}
-      autoComplete="off"
-    >
-      <Form.Item<PostFieldType>
-        label="Title"
-        name="title"
-        rules={[
-          {
-            required: true,
-            whitespace: true,
-            message: "Please input the title!",
-          },
-          { max: 100, message: "The maximum length of title is 100!" },
-        ]}
+    <Spin spinning={loadingPostDetail || loadingUpsertPost}>
+      <Form
+        form={form}
+        name="post-form"
+        layout="vertical"
+        onFinish={handleConfirmUpsert}
+        autoComplete="off"
       >
-        <Input placeholder="Enter title" data-testid="input-title" />
-      </Form.Item>
-
-      <Form.Item<PostFieldType>
-        label="Description"
-        name="description"
-        rules={[
-          {
-            required: true,
-            whitespace: true,
-            message: "Please input the description!",
-          },
-        ]}
-      >
-        <Input.TextArea
-          placeholder="Enter description"
-          autoSize={{ minRows: 4 }}
-          data-testid="input-description"
-        />
-      </Form.Item>
-
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          data-testid="btn-submit-post-form"
+        <Form.Item<PostFieldType>
+          label="Title"
+          name="title"
+          rules={[
+            {
+              required: true,
+              whitespace: true,
+              message: "Please input the title!",
+            },
+            { max: 100, message: "The maximum length of title is 100!" },
+          ]}
         >
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+          <Input placeholder="Enter title" data-testid="input-title" />
+        </Form.Item>
+
+        <Form.Item<PostFieldType>
+          label="Description"
+          name="description"
+          rules={[
+            {
+              required: true,
+              whitespace: true,
+              message: "Please input the description!",
+            },
+          ]}
+        >
+          <Input.TextArea
+            placeholder="Enter description"
+            autoSize={{ minRows: 4 }}
+            data-testid="input-description"
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            data-testid="btn-submit-post-form"
+          >
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
     </Spin>
   );
 };
