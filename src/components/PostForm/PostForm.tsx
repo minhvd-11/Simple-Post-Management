@@ -40,6 +40,7 @@ const PostForm: React.FC<PostFormProps> = (props) => {
   return (
     <Spin spinning={loadingPostDetail || loadingUpsertPost}>
       <Form
+        data-testid="form-post"
         form={form}
         name="post-form"
         layout="vertical"

@@ -58,6 +58,7 @@ const PostList: React.FC = () => {
         type="primary"
         icon={<PlusOutlined />}
         onClick={showModal}
+        data-testid="btn-add-new-post"
       >
         Add New Post
       </Button>
