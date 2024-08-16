@@ -15,6 +15,6 @@ export const getPostsMock = {
    };
 
 export const addPostMock = {
-  title: '',
-  description: ''
+  title: 'test',
+  description: 'test'
 }

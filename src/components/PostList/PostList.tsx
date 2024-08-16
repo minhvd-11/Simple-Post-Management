@@ -27,8 +27,8 @@ const PostList: React.FC = () => {
       description: isDeleted
         ? "Delete post successfully!"
         : postToEditId
-        ? "Add new post successfully!"
-        : "Update post successfully!",
+        ? "Update new post successfully!"
+        : "Add post successfully!",
     });
 
     let newQuery; // Default query (go to first page)
