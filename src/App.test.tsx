@@ -3,7 +3,7 @@ import "@testing-library/jest-dom";
 import axios from "axios";
 import App from "./App";
 
-import { getPostsMock } from "./services/mocks/posts";
+import { getPostsMock, addPostMock } from "./services/mocks/posts";
 
 // Mock jest and set the type
 jest.mock("axios");
@@ -14,6 +14,9 @@ mockedAxios.get.mockResolvedValue({
   data: getPostsMock,
 });
 
+mockedAxios.post.mockResolvedValue({
+  data: addPostMock,
+})
 
 test("fetches and displays post data in post cards", async () => {
   // Arrange
@@ -73,8 +76,6 @@ test("Display validation error when submitting post form with title that exceeds
 test("Create a new post successfully", async () => {
   // Arrange
   render(<App />);
-  const newPostTitle = "New Post Title";
-  const newPostDescription = "New Post Description";
 
   // Act
   act(() => {
@@ -84,21 +85,12 @@ test("Create a new post successfully", async () => {
   await screen.findByTestId("form-post");
 
   act(() => {
-    fireEvent.change(screen.getByTestId("input-title"), { target: { value: newPostTitle } });
-    fireEvent.change(screen.getByTestId("input-description"), { target: { value: newPostDescription } });
+    fireEvent.change(screen.getByTestId("input-title"), { target: { value: addPostMock.title } });
+    fireEvent.change(screen.getByTestId("input-description"), { target: { value: addPostMock.description } });
   });
 
   act(() => {
     fireEvent.click(screen.getByTestId("btn-submit-post-form"));
-  });
-
-  // Mock the POST request to return a successful response
-  mockedAxios.post.mockResolvedValue({
-    data: {
-      id: 1,
-      title: newPostTitle,
-      description: newPostDescription,
-    },
   });
 
   // Wait for the post to be created
@@ -107,8 +99,8 @@ test("Create a new post successfully", async () => {
   // Assert
   expect(screen.getByText("Add post successfully!")).toBeInTheDocument();
   expect(mockedAxios.post).toHaveBeenCalledTimes(1);
-  expect(mockedAxios.post).toHaveBeenCalledWith("/posts", {
-    title: newPostTitle,
-    description: newPostDescription,
+  expect(mockedAxios.post).toHaveBeenCalledWith("https://training-program.dev.tekoapis.net/api/v1/posts", {
+    title: addPostMock.title,
+    description: addPostMock.description,
   });
 });
