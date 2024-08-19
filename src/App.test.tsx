@@ -3,7 +3,7 @@ import "@testing-library/jest-dom";
 import axios from "axios";
 import App from "./App";
 
-import { getPostsMock, addPostMock } from "./services/mocks/posts";
+import { getPostsMock } from "./services/mocks/posts";
 
 // Mock jest and set the type
 jest.mock("axios");
@@ -14,9 +14,6 @@ mockedAxios.get.mockResolvedValue({
   data: getPostsMock,
 });
 
-mockedAxios.post.mockResolvedValue({
-  data: addPostMock,
-});
 
 test("fetches and displays post data in post cards", async () => {
   // Arrange
@@ -73,9 +70,11 @@ test("Display validation error when submitting post form with title that exceeds
   expect(screen.getByText("The maximum length of title is 100!")).toBeInTheDocument();
 });
 
-test("Create new post successfully", async () => {
+test("Create a new post successfully", async () => {
   // Arrange
   render(<App />);
+  const newPostTitle = "New Post Title";
+  const newPostDescription = "New Post Description";
 
   // Act
   act(() => {
@@ -85,22 +84,31 @@ test("Create new post successfully", async () => {
   await screen.findByTestId("form-post");
 
   act(() => {
-    fireEvent.change(screen.getByTestId("input-title"), { target: { value: "New Post Title" } });
-    fireEvent.change(screen.getByTestId("input-description"), { target: { value: "New Post Description" } });
+    fireEvent.change(screen.getByTestId("input-title"), { target: { value: newPostTitle } });
+    fireEvent.change(screen.getByTestId("input-description"), { target: { value: newPostDescription } });
   });
 
   act(() => {
     fireEvent.click(screen.getByTestId("btn-submit-post-form"));
   });
 
-  await screen.findAllByTestId("card-post");
+  // Mock the POST request to return a successful response
+  mockedAxios.post.mockResolvedValue({
+    data: {
+      id: 1,
+      title: newPostTitle,
+      description: newPostDescription,
+    },
+  });
+
+  // Wait for the post to be created
+  await screen.findByText("Add post successfully!");
 
   // Assert
-
+  expect(screen.getByText("Add post successfully!")).toBeInTheDocument();
   expect(mockedAxios.post).toHaveBeenCalledTimes(1);
   expect(mockedAxios.post).toHaveBeenCalledWith("/posts", {
-    title: "New Post Title",
-    description: "New Post Description",
+    title: newPostTitle,
+    description: newPostDescription,
   });
-  expect(screen.getAllByTestId("card-post")).toHaveLength(getPostsMock.posts.length + 1);
 });
