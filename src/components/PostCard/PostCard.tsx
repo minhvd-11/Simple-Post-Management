@@ -6,15 +6,21 @@ import { useState } from "react";
 import { deletePost } from "../../services/apis/posts";
 
 interface PostCardProps {
+  /**
+  * The post data to be shown in card
+  */
   post: Post;
-  handleEditPost: (id: number) => void;
-  handleAfterSuccess: (isDeleted?: boolean) => void;
+  handleEditPost?: (id: number) => void;
+  handleAfterSuccess?: (isDeleted?: boolean) => void;
 }
 
 const { Paragraph } = Typography;
 
+/**
+* UI component to render the post data inside a card
+*/
 const PostCard: React.FC<PostCardProps> = (props) => {
-  const { post, handleEditPost, handleAfterSuccess } = props;
+  const { post, handleEditPost = () => {}, handleAfterSuccess=()=> {} } = props;
   const [loadingDeletePost, setLoadingDeletePost] = useState<boolean>(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -29,20 +35,25 @@ const PostCard: React.FC<PostCardProps> = (props) => {
     handleAfterSuccess(true);
   };
 
-
   return (
     <Card
       data-testid="card-post"
       className="post-card"
       title={`[${post.id}] ${post.title}`}
       actions={[
-        <EditOutlined key="edit" onClick={() => handleEditPost(post.id)} />,
+        <EditOutlined
+          data-testid="icon-edit-post"
+          key="edit"
+          onClick={() => handleEditPost(post.id)}
+        />,
         <Popconfirm
           key="delete"
           title="Delete Post"
           description="Are you sure to delete this post?"
           onConfirm={handleConfirmDelete}
-          okButtonProps={{ loading: loadingDeletePost }}
+          okButtonProps={{ loading: loadingDeletePost,
+            'data-testid': 'btn-confirm-delete-post',
+           }}
           okText="Confirm"
           cancelText="Cancel"
         >

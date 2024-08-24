@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import axios from "axios";
 import App from "./App";
@@ -18,6 +18,10 @@ mockedAxios.post.mockResolvedValue({
   data: addPostMock,
 })
 
+mockedAxios.delete.mockResolvedValue({
+  data: { message: "Post deleted successfully" },
+});
+
 test("fetches and displays post data in post cards", async () => {
   // Arrange
   render(<App />);
@@ -36,6 +40,7 @@ test("Display validation error when submitting post form with empty values", asy
   render(<App />);
 
   //Act
+  await screen.findAllByTestId("card-post");
   act(() => {
     fireEvent.click(screen.getByTestId("btn-add-new-post"));
   });
@@ -57,6 +62,7 @@ test("Display validation error when submitting post form with title that exceeds
   render(<App />);
 
   // Act
+  await screen.findAllByTestId("card-post")
   act(() => {
     fireEvent.click(screen.getByTestId("btn-add-new-post"));
   });
@@ -78,6 +84,7 @@ test("Create a new post successfully", async () => {
   render(<App />);
 
   // Act
+  await screen.findAllByTestId("card-post")
   act(() => {
     fireEvent.click(screen.getByTestId("btn-add-new-post"));
   });
@@ -103,4 +110,45 @@ test("Create a new post successfully", async () => {
     title: addPostMock.title,
     description: addPostMock.description,
   });
+});
+
+test("Delete a post successfully", async () => {
+  // Arrange
+  render(<App />);
+
+  // Act
+  await screen.findAllByTestId("card-post");
+
+  // Get the first post card
+  const firstPostCard = screen.getAllByTestId("card-post")[0];
+
+  // Get the delete button of the first post card
+  const deleteButton = within(firstPostCard).getByTestId("icon-delete-post");
+
+  act(() => {
+    fireEvent.click(deleteButton);
+  });
+
+  await screen.findByText("Delete Post");
+
+  const confirmButton = screen.getByTestId('btn-confirm-delete-post');
+  fireEvent.click(confirmButton);
+
+  // Mock the axios delete method
+  mockedAxios.delete.mockResolvedValue({
+    data: { message: "Post deleted successfully" },
+  });
+
+  // Act
+  act(() => {
+    fireEvent.click(confirmButton);
+  });
+
+  // Wait for the post to be deleted
+  await screen.findByText("Delete post successfully!");
+
+  // Assert
+  expect(screen.getByText("Delete post successfully!")).toBeInTheDocument();
+  expect(mockedAxios.delete).toHaveBeenCalledTimes(1);
+  expect(mockedAxios.delete).toHaveBeenCalledWith(`https://training-program.dev.tekoapis.net/api/v1/posts/${getPostsMock.posts[0].id}`);
 });

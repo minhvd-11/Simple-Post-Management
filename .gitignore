@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 coverage
+.storybook
+stories
 
 # Editor directories and files
 .vscode/*
@@ -25,3 +27,5 @@ coverage
 *.sw?
 
 
+
+*storybook.log
