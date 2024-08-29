@@ -1,16 +1,33 @@
 # Post Management
 
 - Task Completed:
-+ Responsive design
-+ API method: get, post, put, delete.
-+ Basic functions: Get data by param, id. Add new post. Edit post. Delete Post
-+ Well work: <PostCardList> and <PostCard> with get method.
 
-- Problem remain:
-+ The Add, Edit, Delete Button : should be in one Component?
-+ The PostForm component (Bad code): Should it be two different component for add/edit function?
-+ Render problem: The PostCardList is not rendered after Add/Edit/Delete action. (try using callback to the custom hook usePost() but feel not right)
-+ useContext: Not sure placing in right place.
+Build UI components for the Post Management project (100%)
+
+1. Show list of posts
+2. Add a new post
+3. Edit a post
+4. Delete a post
+
+Implement logic create, get detail, update and delete post (integrated with API using Axios) with custom react hook (100%)
+
+1. Create post: POST /posts
+2. Get detail post: GET /posts/{id}
+3. Update post: PUT /posts/{id}
+4. Delete post: DELETE /posts/{id}
+
+Write integration tests for the following use cases (60%)
+
+1. Display validation error when submitting post form with empty values
+2. Display validation error when submitting post form with title that exceeds the maximum length (100)
+3. Create new post successfully
+4. Update post successfully
+5. Delete post successfully
+
+Next task:
+
+1. Write Storybook
+2. Setup CI & deploy your project to a static host
 
 ..........
 
