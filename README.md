@@ -31,4 +31,4 @@ Next task:
 
 ..........
 
-Seft Progress: 70&
+Self Progress: 70%
