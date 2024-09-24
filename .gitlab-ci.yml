@@ -7,7 +7,6 @@ deploy-prod:
   stage: deploy
   script:
     - npm run build
-    - mkdir public
     - cp -r ./dist/* public/
   artifacts:
     paths:
