@@ -14,5 +14,6 @@ deploy-prod:
   environment:
     name: production
     url: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME
+    exposure: public
   only:
     - main
