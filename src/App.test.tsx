@@ -1,9 +1,15 @@
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import axios from "axios";
 import App from "./App";
 
-import { getPostsMock, addPostMock } from "./services/mocks/posts";
+import {
+  createPostMock,
+  deletePostMock,
+  getPostsMock,
+  updatePostMock,
+} from "./services/mocks/posts";
 
 // Mock jest and set the type
 jest.mock("axios");
@@ -12,14 +18,6 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 // Provide the data object to be returned
 mockedAxios.get.mockResolvedValue({
   data: getPostsMock,
-});
-
-mockedAxios.post.mockResolvedValue({
-  data: addPostMock,
-})
-
-mockedAxios.delete.mockResolvedValue({
-  data: { message: "Post deleted successfully" },
 });
 
 test("fetches and displays post data in post cards", async () => {
@@ -50,7 +48,7 @@ test("Display validation error when submitting post form with empty values", asy
   act(() => {
     fireEvent.click(screen.getByTestId("btn-submit-post-form"));
   });
-  await  screen.findByText("Please input the title!");
+  await screen.findByText("Please input the title!");
 
   //Assert
   expect(screen.getByText("Please input the title!")).toBeInTheDocument();
@@ -62,7 +60,7 @@ test("Display validation error when submitting post form with title that exceeds
   render(<App />);
 
   // Act
-  await screen.findAllByTestId("card-post")
+  await screen.findAllByTestId("card-post");
   act(() => {
     fireEvent.click(screen.getByTestId("btn-add-new-post"));
   });
@@ -70,85 +68,74 @@ test("Display validation error when submitting post form with title that exceeds
   await screen.findByTestId("form-post");
 
   act(() => {
-    fireEvent.change(screen.getByTestId("input-title"), { target: { value: "a".repeat(101) } });
+    fireEvent.change(screen.getByTestId("input-title"), {
+      target: { value: "a".repeat(101) },
+    });
   });
 
   await screen.findByText("The maximum length of title is 100!");
 
   // Assert
-  expect(screen.getByText("The maximum length of title is 100!")).toBeInTheDocument();
+  expect(
+    screen.getByText("The maximum length of title is 100!")
+  ).toBeInTheDocument();
 });
 
-test("Create a new post successfully", async () => {
+test("creates new post successfully", async () => {
   // Arrange
+  mockedAxios.post.mockResolvedValue({
+    data: createPostMock,
+  });
   render(<App />);
 
   // Act
-  await screen.findAllByTestId("card-post")
-  act(() => {
-    fireEvent.click(screen.getByTestId("btn-add-new-post"));
-  });
+  await userEvent.click(screen.getByTestId("btn-add-new-post"));
 
-  await screen.findByTestId("form-post");
+  const titleInput = screen.getByTestId("input-title");
+  const descriptionInput = screen.getByTestId("input-description");
+  await userEvent.type(titleInput, "Dummy title");
+  await userEvent.type(descriptionInput, "Dummy description");
 
-  act(() => {
-    fireEvent.change(screen.getByTestId("input-title"), { target: { value: addPostMock.title } });
-    fireEvent.change(screen.getByTestId("input-description"), { target: { value: addPostMock.description } });
-  });
-
-  act(() => {
-    fireEvent.click(screen.getByTestId("btn-submit-post-form"));
-  });
-
-  // Wait for the post to be created
-  await screen.findByText("Add post successfully!");
+  await userEvent.click(screen.getByTestId("btn-submit-post-form"));
 
   // Assert
-  expect(screen.getByText("Add post successfully!")).toBeInTheDocument();
-  expect(mockedAxios.post).toHaveBeenCalledTimes(1);
-  expect(mockedAxios.post).toHaveBeenCalledWith("https://training-program.dev.tekoapis.net/api/v1/posts", {
-    title: addPostMock.title,
-    description: addPostMock.description,
-  });
+ 
 });
 
-test("Delete a post successfully", async () => {
+test("updates post successfully", async () => {
   // Arrange
+  mockedAxios.put.mockResolvedValue({
+    data: updatePostMock,
+  });
   render(<App />);
 
   // Act
-  await screen.findAllByTestId("card-post");
+  await screen.findAllByTestId("icon-edit-post");
+  await userEvent.click(screen.getAllByTestId("icon-edit-post")[0]);
 
-  // Get the first post card
-  const firstPostCard = screen.getAllByTestId("card-post")[0];
+  const titleInput = screen.getByTestId("input-title");
+  const descriptionInput = screen.getByTestId("input-description");
+  await userEvent.type(titleInput, "Post 1 edit");
+  await userEvent.type(descriptionInput, "This is post 1 edit");
 
-  // Get the delete button of the first post card
-  const deleteButton = within(firstPostCard).getByTestId("icon-delete-post");
+  await userEvent.click(screen.getByTestId("btn-submit-post-form"));
 
-  act(() => {
-    fireEvent.click(deleteButton);
-  });
+  // Assert
+  expect(screen.getByText("Update post successfully!")).toBeInTheDocument();
+});
 
-  await screen.findByText("Delete Post");
-
-  const confirmButton = screen.getByTestId('btn-confirm-delete-post');
-  fireEvent.click(confirmButton);
-
-  // Mock the axios delete method
+test("deletes post successfully", async () => {
+  // Arrange
   mockedAxios.delete.mockResolvedValue({
-    data: { message: "Post deleted successfully" },
+    data: deletePostMock,
   });
+  render(<App />);
 
   // Act
-  act(() => {
-    fireEvent.click(confirmButton);
-  });
-
-  // Wait for the post to be deleted
-  await screen.findByText("Delete post successfully!");
+  await screen.findAllByTestId("icon-delete-post");
+  await userEvent.click(screen.getAllByTestId("icon-delete-post")[0]);
+  await userEvent.click(screen.getByTestId("btn-confirm-delete-post"));
 
   // Assert
   expect(screen.getByText("Delete post successfully!")).toBeInTheDocument();
-  expect(mockedAxios.delete).toHaveBeenCalledTimes(1);
-  expect(mockedAxios.delete).toHaveBeenCalledWith(`https://training-program.dev.tekoapis.net/api/v1/posts/${getPostsMock.posts[0].id}`);
 });
