@@ -11,6 +11,8 @@ deploy-prod:
   artifacts:
     paths:
       - public
-  environment: production
+  environment:
+    name: production
+    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME
   only:
     - main
