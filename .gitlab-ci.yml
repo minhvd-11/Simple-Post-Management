@@ -1,11 +1,17 @@
-# The Docker image that will be used to build your app
 image: node:lts
-# Functions that should be executed before the build script is run
+
 before_script:
   - npm ci
+
 deploy-prod:
   stage: deploy
   script:
-    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
-    - npm run dev
+    - npm run build
+    - mkdir public
+    - cp -r ./dist/* public/
+  artifacts:
+    paths:
+      - public
   environment: production
+  only:
+    - main
