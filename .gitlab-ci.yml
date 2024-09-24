@@ -3,18 +3,12 @@ image: node:lts
 before_script:
   - npm ci
 
-deploy-prod:
+pages:
   stage: deploy
   script:
     - npm run build
     - cp -r ./dist/* public/
   artifacts:
-    paths:
-      - public
-  environment:
-    name: production
-    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/$CI_PROJECT_NAME
-  pages:
     paths:
       - public
   only:
