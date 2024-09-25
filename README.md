@@ -16,7 +16,7 @@ Implement logic create, get detail, update and delete post (integrated with API 
 3. Update post: PUT /posts/{id}
 4. Delete post: DELETE /posts/{id}
 
-Write integration tests for the following use cases (60%)
+Write integration tests for the following use cases (100%)
 
 1. Display validation error when submitting post form with empty values
 2. Display validation error when submitting post form with title that exceeds the maximum length (100)
@@ -24,11 +24,20 @@ Write integration tests for the following use cases (60%)
 4. Update post successfully
 5. Delete post successfully
 
+Write Storybook for all components in use (33%)
+
+1. PostCard (done)
+2. PostForm
+3. PostList
+
+Setup CI & deploy your project to a static host on Gitlab Pages (100%)
+
+ URL: <https://simple-react-project-teko-danolearn-fe-a8c05fe8b715f61f3de65b9b.gitlab.io/>
+
 Next task:
 
-1. Write Storybook
-2. Setup CI & deploy your project to a static host
-
+1. Upgrade project: login/sign-up
+2. API protocol
 ..........
 
-Self Progress: 70%
+Self Progress: 80%
